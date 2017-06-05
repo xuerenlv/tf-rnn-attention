@@ -1,6 +1,7 @@
 import tensorflow as tf
 
 # hello
+# hello2
 
 def attention(inputs, attention_size, time_major=False):
     """
