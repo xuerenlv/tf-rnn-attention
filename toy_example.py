@@ -1,3 +1,4 @@
+# coding:utf8
 #!/usr/bin/python
 """
 Toy example of attention layer use.
@@ -15,13 +16,13 @@ from keras.datasets import imdb
 from attention import attention
 from utils import *
 
-
 # Load the dataset
 (X_train, y_train), (X_test, y_test) = imdb.load_data()
 
+
 # Sequences preprocessing
 vocabulary_size = get_vocabulary_size(X_train)
-X_test = fit_in_vocabulary(X_test, vocabulary_size)
+X_test = fit_in_vocabulary(X_test, vocabulary_size)  # 这个作用就相当于：把测试集中的没有在训练集中出现的词语去除掉
 sequence_length = 250
 X_train = zero_pad(X_train, sequence_length)
 X_test = zero_pad(X_test, sequence_length)
@@ -47,12 +48,14 @@ rnn_outputs, _ = rnn(GRUCell(hidden_size), inputs=batch_embedded, sequence_lengt
 attention_size = 50
 attention_output = attention(rnn_outputs, attention_size)
 
+
 # Dropout
 keep_prob = 0.5
 drop = tf.nn.dropout(attention_output, keep_prob_ph)
 
 # Fully connected layer
-W = tf.Variable(tf.truncated_normal([drop.get_shape()[1].value, 1], stddev=0.1))
+# W = tf.Variable(tf.truncated_normal([drop.get_shape()[1].value, 1], stddev=0.1))
+W = tf.Variable(tf.truncated_normal([hidden_size, 1], stddev=0.1))
 b = tf.Variable(tf.constant(0., shape=[1]))
 y_hat = tf.nn.xw_plus_b(drop, W, b)
 y_hat = tf.squeeze(y_hat)
